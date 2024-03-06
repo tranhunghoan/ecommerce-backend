@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class JWTService {
@@ -32,7 +33,7 @@ public class JWTService {
     public String generateJWT(LocalUser user){
         return JWT.create()
                 .withClaim(USERNAME_KEY, user.getUsername())
-                .withClaim(ROLE_KEY, user.getRole().toString())
+                .withClaim(ROLE_KEY, Optional.ofNullable(user.getRole()).isPresent() ? user.getRole().name() : null)
                 .withExpiresAt(new Date(System.currentTimeMillis() + (1000 * expiryInSeconds)))
                 .withIssuer(issuer)
                 .sign(algorithm);

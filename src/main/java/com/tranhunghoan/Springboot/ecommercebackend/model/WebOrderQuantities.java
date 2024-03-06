@@ -1,10 +1,15 @@
 package com.tranhunghoan.Springboot.ecommercebackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tranhunghoan.Springboot.ecommercebackend.api.model.CreateOrderQuantityRequest;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "web_order_quantities")
+@Getter
+@Setter
 public class WebOrderQuantities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,36 +27,9 @@ public class WebOrderQuantities {
     @JoinColumn(name = "order_id", nullable = false)
     private WebOrder order;
 
-    public WebOrder getOrder() {
-        return order;
+    public WebOrderQuantities(CreateOrderQuantityRequest request) {
+        this.product = new Product();
+        this.product.setId(request.productId());
+        this.quantity = request.quantity();
     }
-
-    public void setOrder(WebOrder order) {
-        this.order = order;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 }

@@ -1,5 +1,6 @@
 package com.tranhunghoan.Springboot.ecommercebackend.service;
 
+import com.tranhunghoan.Springboot.ecommercebackend.api.model.CreateOrderQuantityRequest;
 import com.tranhunghoan.Springboot.ecommercebackend.api.model.OrderBody;
 import com.tranhunghoan.Springboot.ecommercebackend.model.*;
 import com.tranhunghoan.Springboot.ecommercebackend.model.dao.AddressDAO;
@@ -24,11 +25,13 @@ public class OrderService {
         this.localUserDAO = localUserDAO;
         this.addressDAO = addressDAO;
     }
-    public void createOrder(LocalUser user, Address address, List<WebOrderQuantities> quantities) {
+    public void createOrder(LocalUser user, Address address, List<CreateOrderQuantityRequest> requests) {
         WebOrder order = new WebOrder();
         order.setUser(user);
         order.setAddress(address);
+        var quantities = requests.stream().map(WebOrderQuantities::new).toList();
         order.setQuantitieses(quantities);
+        webOrderDAO.save(order);
     }
     public List<WebOrder> getOrders(LocalUser user)
     {

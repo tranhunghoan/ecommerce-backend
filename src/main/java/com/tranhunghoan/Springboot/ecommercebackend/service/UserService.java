@@ -11,25 +11,22 @@ import com.tranhunghoan.Springboot.ecommercebackend.model.dao.LocalUserDAO;
 import com.tranhunghoan.Springboot.ecommercebackend.model.dao.VerificationTokenDAO;
 import com.tranhunghoan.Springboot.ecommercebackend.model.enumerate.Role;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.sql.Timestamp;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private LocalUserDAO localUserDAO;
-    private EncryptionService encryptionService;
-    private JWTService jwtService;
-    private EmailService emailService;
-    private VerificationTokenDAO verificationTokenDAO;
-    public UserService(LocalUserDAO localUserDAO, EncryptionService encryptionService, JWTService jwtService, EmailService emailService, VerificationTokenDAO verificationTokenDAO) {
-        this.localUserDAO = localUserDAO;
-        this.encryptionService = encryptionService;
-        this.jwtService = jwtService;
-        this.emailService = emailService;
-        this.verificationTokenDAO = verificationTokenDAO;
-    }
+    private final LocalUserDAO localUserDAO;
+    private final EncryptionService encryptionService;
+    private final JWTService jwtService;
+//    private EmailService emailService;
+    private final VerificationTokenDAO verificationTokenDAO;
+
     public LocalUser registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException, EmailFailureException {
 
         if (localUserDAO.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent()
@@ -44,7 +41,7 @@ public class UserService {
         user.setPassword(encryptionService.encryptPassword(registrationBody.getPassword()));
         user.setRole(Role.USER);
         VerificationToken verificationToken = createVerificationToken(user);
-        emailService.sendVerificationEmail(verificationToken);
+//        emailService.sendVerificationEmail(verificationToken);
         return localUserDAO.save(user);
     }
     public  String loginUser(LoginBody loginBody) throws UserNotVerifiedException, EmailFailureException {
@@ -62,7 +59,7 @@ public class UserService {
                     if (resend) {
                         VerificationToken verificationToken = createVerificationToken(user);
                         verificationTokenDAO.save(verificationToken);
-                        emailService.sendVerificationEmail(verificationToken);
+//                        emailService.sendVerificationEmail(verificationToken);
                     }
                     throw new UserNotVerifiedException(resend);
                 }
